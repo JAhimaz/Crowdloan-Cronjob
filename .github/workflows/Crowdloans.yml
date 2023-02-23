@@ -3,7 +3,7 @@ name: Crowdloans
 on:
   schedule:
     # Run every 30 seconds
-    - cron: "*/30 * * * * *"
+    - cron: "*/1 * * * * *"
 
 jobs:
   create-issue:
