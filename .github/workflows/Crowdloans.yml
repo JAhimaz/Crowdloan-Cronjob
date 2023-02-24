@@ -1,8 +1,8 @@
 name: Crowdloans
 
 on:
-  schedule:
-    - cron: "* */1 * * *"
+  # schedule:
+  #   - cron: "* */1 * * *"
   workflow_dispatch:
 
 jobs:
@@ -19,4 +19,4 @@ jobs:
       - name: Run Crowdloans
         env:
           TEST_SECRET: ${{ secrets.TEST_SECRET }}
-        run: yarn crowdloans
+        run: yarn start
