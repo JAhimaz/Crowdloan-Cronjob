@@ -31,7 +31,6 @@ async function checkForNewCrowdloans(): Promise<boolean> {
   })
 
   const paraIds = (await Promise.all(allParaIds)).flat();
-  paraIds.push('0-0'); // Add the default paraId
   const hash = md5(paraIds.toString());
 
   // get hash from db
@@ -53,22 +52,26 @@ async function checkForNewCrowdloans(): Promise<boolean> {
   // compare paraIds to dbParaIds and return the new ones
   const newParaIds = paraIds.filter((x: any) => !dbParaIds.includes(x));
 
+  if(newParaIds.length === 0) {
+    console.log(`No new Crowdloans detected but updating hash`);
+  }
+
   // Create a GitHub issue for each new paraId
-  newParaIds.forEach((x: any) => {
-    const [relayChainId, paraId] = x.split('-');
-    const relayChain = Object.keys(relayChains).find(key => relayChains[key].id === Number(relayChainId));
+  if(newParaIds.length > 0) {
+    newParaIds.forEach((x: any) => {
+      const [relayChainId, paraId] = x.split('-');
+      const relayChain = Object.keys(relayChains).find(key => relayChains[key].id === Number(relayChainId));
 
-    console.log(`New Crowdloan: ${paraId} on ${relayChain.toUpperCase()}`);
+      console.log(`New Crowdloan: ${paraId} on ${relayChain.toUpperCase()}`);
 
-    octokit.rest.issues.create({
-      owner: 'JAhimaz',
-      repo: 'Crowdloan-Cronjob',
-      title: `[Crowdloan] New Crowdloan: ${paraId} on ${relayChain.toUpperCase()}`,
-      body: `A new crowdloan has been detected on ${relayChain.toUpperCase()} with the paraId of ${paraId}`
+      octokit.rest.issues.create({
+        owner: 'JAhimaz',
+        repo: 'Crowdloan-Cronjob',
+        title: `[Crowdloan] New Crowdloan: ${paraId} on ${relayChain.toUpperCase()}`,
+        body: `A new crowdloan has been detected on ${relayChain.toUpperCase()} with the paraId of ${paraId}`
+      })
     })
-  })
-
-  console.log(paraIds)
+  }
 
   // Finally set the new Paraids
   await set(ref(db, 'hash'), hash);
