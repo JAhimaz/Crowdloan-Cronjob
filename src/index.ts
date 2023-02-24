@@ -68,6 +68,8 @@ async function checkForNewCrowdloans(): Promise<boolean> {
     })
   })
 
+  console.log(paraIds)
+
   // Finally set the new Paraids
   set(ref(db, 'hash'), hash);
   set(ref(db, 'paraIds'), paraIds);
