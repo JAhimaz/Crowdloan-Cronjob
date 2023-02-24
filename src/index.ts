@@ -31,7 +31,6 @@ async function checkForNewCrowdloans(): Promise<boolean> {
   })
 
   const paraIds = (await Promise.all(allParaIds)).flat();
-  paraIds.push('0-6000'); // Add the default paraId
   const hash = md5(paraIds.toString());
 
   // get hash from db
@@ -71,8 +70,8 @@ async function checkForNewCrowdloans(): Promise<boolean> {
   console.log(paraIds)
 
   // Finally set the new Paraids
-  set(ref(db, 'hash'), hash);
-  set(ref(db, 'paraIds'), paraIds);
+  await set(ref(db, 'hash'), hash);
+  await set(ref(db, 'paraIds'), paraIds);
 
   return true;
 }
