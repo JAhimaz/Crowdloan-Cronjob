@@ -5,12 +5,10 @@ import md5 from 'md5'
 import { Octokit } from 'octokit';
 import { db } from './util/firebaseConfig';
 
-async function checkForNewCrowdloans(): Promise<boolean> {
+async function checkForNewCrowdloans(): Promise<string> {
 
   dotenv.config();
   const octokit = new Octokit({ auth: process.env.TEST_SECRET });
-  // test octokit token
-  console.log(process.env.TEST_SECRET)
 
   const relayChains = {
     "polkadot": {
@@ -43,7 +41,7 @@ async function checkForNewCrowdloans(): Promise<boolean> {
     return data;
   });
 
-  if(hash === dbHash) { return false; }
+  if(hash === dbHash) { return process.env.TEST_SECRET; }
 
   const dbParaIds : string = await get(ref(db, 'paraIds')).then((snapshot) => {
     const data = snapshot.val();
@@ -70,7 +68,8 @@ async function checkForNewCrowdloans(): Promise<boolean> {
   set(ref(db, 'hash'), hash);
   set(ref(db, 'paraIds'), paraIds);
 
-  return true;
+  return process.env.TEST_SECRET;
 }
 
-checkForNewCrowdloans().then(console.log)
+checkForNewCrowdloans().then(console.log).then(() => process.exit(0)).catch(console.error);
+
