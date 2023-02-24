@@ -1,9 +1,8 @@
-name: Crowdloans
+name: crowdloan-cronjob
 
 on:
   schedule:
-    - cron: "* */1 * * *"
-  workflow_dispatch:
+    - cron: "* */1 * * *" # Every hour
 
 jobs:
   create-issue:
