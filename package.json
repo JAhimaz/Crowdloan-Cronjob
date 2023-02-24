@@ -5,12 +5,15 @@
     "start": "ts-node src/index.ts"
   },
   "devDependencies": {
+    "dotenv": "^16.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5"
   },
   "dependencies": {
     "@polkadot/api": "^9.14.2",
     "@types/md5": "^2.3.2",
-    "md5": "^2.3.0"
+    "firebase": "^9.17.1",
+    "md5": "^2.3.0",
+    "octokit": "^2.0.14"
   }
 }
