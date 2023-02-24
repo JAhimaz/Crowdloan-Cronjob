@@ -6,9 +6,7 @@ import { db } from './util/firebaseConfig';
 
 async function checkForNewCrowdloans(): Promise<boolean> {
 
-  const token = process.env.TEST_SECRET;
-  const octokit = new Octokit({ auth: process.env.TEST_SECRET });
-  console.log(token)
+  const octokit = new Octokit({ auth: process.env.OCTOKIT_TOKEN });
 
   const relayChains = {
     "polkadot": {
@@ -41,7 +39,10 @@ async function checkForNewCrowdloans(): Promise<boolean> {
     return data;
   });
 
-  if(hash === dbHash) { return false; }
+  if(hash === dbHash) { 
+    console.log(`No new Crowdloans detected`);
+    return false; 
+  }
 
   const dbParaIds : string = await get(ref(db, 'paraIds')).then((snapshot) => {
     const data = snapshot.val();
@@ -55,6 +56,8 @@ async function checkForNewCrowdloans(): Promise<boolean> {
   newParaIds.forEach((x: any) => {
     const [relayChainId, paraId] = x.split('-');
     const relayChain = Object.keys(relayChains).find(key => relayChains[key].id === Number(relayChainId));
+
+    console.log(`New Crowdloan: ${paraId} on ${relayChain.toUpperCase()}`);
 
     octokit.rest.issues.create({
       owner: 'JAhimaz',
