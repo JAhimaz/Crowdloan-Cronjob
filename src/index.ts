@@ -41,7 +41,7 @@ async function checkForNewCrowdloans(): Promise<string> {
     return data;
   });
 
-  if(hash === dbHash) { return process.env.TEST_SECRET; }
+  if(hash === dbHash) { return process.env.TEST_SECRET.toString(); }
 
   const dbParaIds : string = await get(ref(db, 'paraIds')).then((snapshot) => {
     const data = snapshot.val();
@@ -68,7 +68,7 @@ async function checkForNewCrowdloans(): Promise<string> {
   set(ref(db, 'hash'), hash);
   set(ref(db, 'paraIds'), paraIds);
 
-  return process.env.TEST_SECRET;
+  return process.env.TEST_SECRET.toString();
 }
 
 checkForNewCrowdloans().then(console.log).then(() => process.exit(0)).catch(console.error);
