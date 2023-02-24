@@ -31,7 +31,6 @@ async function checkForNewCrowdloans(): Promise<boolean> {
   })
 
   const paraIds = (await Promise.all(allParaIds)).flat();
-  paraIds.push('0-0'); // Test
   const hash = md5(paraIds.toString());
 
   // get hash from db
