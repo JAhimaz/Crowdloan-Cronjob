@@ -1,14 +1,14 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ref, set, get} from "firebase/database";
-import * as dotenv from 'dotenv';
 import md5 from 'md5'
 import { Octokit } from 'octokit';
 import { db } from './util/firebaseConfig';
 
-async function checkForNewCrowdloans(): Promise<string> {
+async function checkForNewCrowdloans(): Promise<boolean> {
 
-  dotenv.config();
+  const token = process.env.TEST_SECRET;
   const octokit = new Octokit({ auth: process.env.TEST_SECRET });
+  console.log(token)
 
   const relayChains = {
     "polkadot": {
@@ -41,7 +41,7 @@ async function checkForNewCrowdloans(): Promise<string> {
     return data;
   });
 
-  if(hash === dbHash) { return process.env.TEST_SECRET.toString(); }
+  if(hash === dbHash) { return false; }
 
   const dbParaIds : string = await get(ref(db, 'paraIds')).then((snapshot) => {
     const data = snapshot.val();
@@ -68,7 +68,7 @@ async function checkForNewCrowdloans(): Promise<string> {
   set(ref(db, 'hash'), hash);
   set(ref(db, 'paraIds'), paraIds);
 
-  return process.env.TEST_SECRET.toString();
+  return true;
 }
 
 checkForNewCrowdloans().then(console.log).then(() => process.exit(0)).catch(console.error);
