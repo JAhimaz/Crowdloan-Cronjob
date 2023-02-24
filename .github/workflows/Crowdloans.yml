@@ -2,7 +2,7 @@ name: Crowdloans
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "* */1 * * *"
   workflow_dispatch:
 
 jobs:
@@ -15,25 +15,3 @@ jobs:
 
       - name: Install Dependencies
         run: yarn install
-
-      - name: Get Crowdloan Value
-        id: crowdloan
-        run: echo "::set-output name=value::$(yarn start)"
-
-      - name: Check if Issue Exists
-        id: issue_exists
-        uses: peter-evans/create-or-update-issue@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repo: <owner>/<repo>
-          title: "[Crowdloan] New ${{ steps.crowdloan.outputs.value }}"
-          body: "A new crowdloan value of ${{ steps.crowdloan.outputs.value }} was detected."
-          labels: "crowdloan"
-          assignees: "octocat"
-
-      - name: Skip If Issue Exists
-        if: steps.issue_exists.outputs.created == 'false'
-        run: exit 1
-
-      - name: Issue Created
-        run: echo "New issue created"

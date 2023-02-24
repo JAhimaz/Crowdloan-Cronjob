@@ -1,4 +1,5 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
+import md5 from 'md5'
 
 async function checkForNewCrowdloans(): Promise<string> {
   const relayChains = {
@@ -12,17 +13,21 @@ async function checkForNewCrowdloans(): Promise<string> {
     }
   }
 
-  Object.entries(relayChains).forEach(async ([relayChain, { rpc, id }]) => {
-    console.log("Checking for new crowdloans on", relayChain.toUpperCase())
+  const allParaIds = Object.values(relayChains).map(async (rpc : any) => {
+    const api: any = await ApiPromise.create({ provider: new WsProvider(rpc?.rpc), noInitWarn: true });
 
-    const api = await ApiPromise.create({ provider: new WsProvider(rpc), noInitWarn: true });
+    const paraIds = (await api.query.crowdloan?.funds.keys()).map((x: any) => Number(x.args[0])) ?? [];
+    paraIds.sort((a: any, b: any) => a - b);
 
-    const paraIds = await api.query.crowdloan.funds.keys().then(x => x.map(y => Number(y.args[0]))) ?? [];
-    // convert each paraId to a string and add the relay chain id to the front
-    const crowdloans = paraIds.map(paraId => `${id}-${paraId.toString()}`);
+    const formatted = paraIds.map((x: any) => `${rpc.id}-${x}`) ?? [];
 
-    console.log(crowdloans)
+    return formatted;
   })
+
+  const allParaIdsFlat = (await Promise.all(allParaIds)).flat();
+  const hash = md5(allParaIdsFlat.toString());
+
+  console.log(hash)
 
   return "Hello World";
 }
