@@ -65,10 +65,13 @@ async function checkForNewCrowdloans(): Promise<boolean> {
       console.log(`New Crowdloan: ${paraId} on ${relayChain.toUpperCase()}`);
 
       octokit.rest.issues.create({
-        owner: 'JAhimaz',
-        repo: 'Crowdloan-Cronjob',
+        owner: 'TalismanSociety',
+        repo: 'talisman-web',
         title: `[Crowdloan] New Crowdloan: ${paraId} on ${relayChain.toUpperCase()}`,
-        body: `A new crowdloan has been detected on ${relayChain.toUpperCase()} with the paraId of ${paraId}`
+        body: `A new crowdloan has been detected on ${relayChain.toUpperCase()} with the paraId of ${paraId}`,
+        labels: [
+          'crowdloan',
+        ]
       })
     })
   }
